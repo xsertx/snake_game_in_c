@@ -14,9 +14,6 @@
 #define EMPTY_SYM 178
 #define FOOD_SYM 157
 
-
-#define RAND_MAX F_SIZE
-
 void delay(int number_of_miliseconds)
 {
 	// Converting time into milli_seconds 

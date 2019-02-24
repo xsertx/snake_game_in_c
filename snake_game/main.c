@@ -1,15 +1,9 @@
-// DONE
-// snake is alive!
-// snake can move (w/a/s/d)
-// apple is growing
-// snake can eat apple
+// Main functional is working ...
 
 // TODO LIST
-// - snake don't know what is collisions need to teach her manners!
 // - do we need walls?
 // - fps .. sucks
 // - clean code
-// - sometimes apple randomly trying to grow on snake's body.. as a result fruit disappear on the map.
 // - add some color
 
 #include<stdio.h>
@@ -18,11 +12,9 @@
 #include <Windows.h>
 
 void setDirection(char key, snake* player, char field[F_SIZE][F_SIZE], food* fr, int* gameOver);
-
 void drawingField(char field[F_SIZE][F_SIZE], int state, snake* pl);
 void updateSnakeInField(snake* player, char field[F_SIZE][F_SIZE]);
-
-void placeFood(food* s_food, char field[F_SIZE][F_SIZE]);
+void placeFood(food* s_food, char field[F_SIZE][F_SIZE], snake * pl);
 
 int main()
 {
@@ -64,7 +56,7 @@ int main()
 		setDirection(key_pressed, &player, field, &apple, &gameOver);
 
 		// placing a food..
-		placeFood(&apple, field);
+		placeFood(&apple, field, &player);
 
 		// drawing field with snake
 		drawingField(field, DRAW, &player);
@@ -173,13 +165,32 @@ void drawingField(char field[F_SIZE][F_SIZE], int state, snake * pl)
 	}
 }
 
-void placeFood(food * fruit, char field[F_SIZE][F_SIZE])
+void placeFood(food * fruit, char field[F_SIZE][F_SIZE], snake * pl)
 {
 	if (!fruit->inField)
 	{
+
 		fruit->inField = 1;
-		fruit->position.x = rand() % F_SIZE;
-		fruit->position.y = rand() % F_SIZE;
+
+		int foodNotInSnake = 0, c = 0;
+		while (!foodNotInSnake)
+		{
+			fruit->position.x = rand() % F_SIZE;
+			fruit->position.y = rand() % F_SIZE;
+
+			for (int i = 0; i < pl->length; i++)
+			{
+				if (pl->body_position[i].x == fruit->position.x && pl->body_position[i].y == fruit->position.y)
+				{
+					foodNotInSnake = 0;
+					break;
+				}
+				else
+					c++;
+			}
+			if (c == pl->length)
+				foodNotInSnake = 1;
+		}
 		field[fruit->position.y][fruit->position.x] = FOOD_SYM;
 	}
 }
