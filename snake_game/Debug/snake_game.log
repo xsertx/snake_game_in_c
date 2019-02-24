@@ -1,11 +1,11 @@
 ﻿  main.c
-C:\Users\miche\source\repos\snake_game\snake_game\main.c(21): warning C4005: 'RAND_MAX': macro redefinition
+C:\Users\miche\source\repos\snake_game\snake_game\snake_lib.h(18): warning C4005: 'RAND_MAX': macro redefinition
   C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\stdlib.h(344): note: see previous definition of 'RAND_MAX'
-C:\Users\miche\source\repos\snake_game\snake_game\main.c(32): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\miche\source\repos\snake_game\snake_game\main.c(47): warning C4020: 'drawingField': too many actual parameters
-C:\Users\miche\source\repos\snake_game\snake_game\main.c(60): warning C4013: '_kbhit' undefined; assuming extern returning int
-C:\Users\miche\source\repos\snake_game\snake_game\main.c(61): warning C4013: '_getch' undefined; assuming extern returning int
-C:\Users\miche\source\repos\snake_game\snake_game\main.c(70): warning C4020: 'drawingField': too many actual parameters
-C:\Users\miche\source\repos\snake_game\snake_game\main.c(35): warning C4101: 'direction': unreferenced local variable
-C:\Users\miche\source\repos\snake_game\snake_game\main.c(223): warning C4029: declared formal parameter list different from definition
+C:\Users\miche\source\repos\snake_game\snake_game\main.c(34): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\miche\source\repos\snake_game\snake_game\main.c(50): warning C4020: 'drawingField': too many actual parameters
+C:\Users\miche\source\repos\snake_game\snake_game\main.c(63): warning C4013: '_kbhit' undefined; assuming extern returning int
+C:\Users\miche\source\repos\snake_game\snake_game\main.c(64): warning C4013: '_getch' undefined; assuming extern returning int
+C:\Users\miche\source\repos\snake_game\snake_game\main.c(73): warning C4020: 'drawingField': too many actual parameters
+C:\Users\miche\source\repos\snake_game\snake_game\main.c(37): warning C4101: 'direction': unreferenced local variable
+C:\Users\miche\source\repos\snake_game\snake_game\main.c(152): warning C4029: declared formal parameter list different from definition
   snake_game.vcxproj -> C:\Users\miche\source\repos\snake_game\Debug\snake_game.exe

@@ -12,28 +12,15 @@
 // - sometimes apple randomly trying to grow on snake's body.. as a result fruit disappear on the map.
 // - add some color
 
+// some idea before sleep
+// make var up, down, left, right
+// then after reading keyboard just update this var
+// and according on value of this var-s update directions of snake
 
 #include<stdio.h>
 #include<stdlib.h>
 #include "snake_lib.h"
 #include <Windows.h>
-
-#define UP 119
-#define DOWN 115
-#define LEFT 97
-#define RIGHT 100
-
-#define F_SIZE 20
-
-#define CLEAR 0
-#define DRAW 1
-
-#define SNAKE_SYM 143
-#define EMPTY_SYM 178
-#define FOOD_SYM 157
-
-
-#define RAND_MAX F_SIZE
 
 void setDirection(char key, snake* player, char field[F_SIZE][F_SIZE], food* fr);
 
@@ -56,6 +43,7 @@ int main()
 	player.body_position[0].x = X;
 	player.body_position[0].y = Y;
 	player.isGrow = 0;
+
 
 	char field[F_SIZE][F_SIZE];
 	// clearing our field
@@ -96,133 +84,59 @@ void setDirection(char key, snake * player, char field[F_SIZE][F_SIZE], food * f
 {
 	int i = 0, j = 0;
 	int len = player->length;
+
+	// There is only 2 types of movement vertical and horizontal - vert and horiz var-s correspondingly
+	int vert = 0, horiz = 0;
+
+	// we just defining a direction using only 2 var. 
 	switch (key)
 	{
 	case DOWN:
-		// checking for what our snake is eating..
-		if (player->body_position[0].x == fruit->position.x && player->body_position[0].y + 1 == fruit->position.y)
-		{
-			player->isGrow = 1;
-			player->length++;
-
-			fruit->inField = 0;
-		}
-		else
-		{
-			player->isGrow = 0;
-		}
-
-		if (player->length > 1)
-		{
-			i = len;
-			field[player->body_position[i - 1].y][player->body_position[i - 1].x] = EMPTY_SYM;
-			for (; i > 0; i--)
-			{
-				player->body_position[i] = player->body_position[i - 1];
-			}
-		}
-		else
-			field[player->body_position[0].y][player->body_position[0].x] = EMPTY_SYM;
-
-		player->body_position[i].y = player->body_position[i].y + 1;
-
-		field[player->body_position[i].y][player->body_position[i].x] = SNAKE_SYM;
-
+		vert = 1;	horiz = 0;
 		break;
 	case UP:
-			// checking for what our snake is eating..
-			if (player->body_position[0].x == fruit->position.x && player->body_position[0].y - 1 == fruit->position.y)
-			{
-				player->isGrow = 1;
-				player->length++;
-
-				fruit->inField = 0;
-			}
-			else
-			{
-				player->isGrow = 0;
-			}
-
-			if (player->length > 1)
-			{
-				i = len;
-				field[player->body_position[i - 1].y][player->body_position[i - 1].x] = EMPTY_SYM;
-				for (; i > 0; i--)
-				{
-					player->body_position[i] = player->body_position[i - 1];
-				}
-			}
-			else
-				field[player->body_position[0].y][player->body_position[0].x] = EMPTY_SYM;
-
-			player->body_position[i].y = player->body_position[i].y - 1;
-
-			field[player->body_position[i].y][player->body_position[i].x] = SNAKE_SYM;
+		vert = -1;	horiz = 0;
 		break;
 	case LEFT:
-
-			// checking for what our snake is eating..
-			if (player->body_position[0].x - 1 == fruit->position.x && player->body_position[0].y == fruit->position.y)
-			{
-				player->isGrow = 1;
-				player->length++;
-
-				fruit->inField = 0;
-			}
-			else
-			{
-				player->isGrow = 0;
-			}
-
-			if (player->length > 1)
-			{
-				i = len;
-				field[player->body_position[i - 1].y][player->body_position[i - 1].x] = EMPTY_SYM;
-				for (; i > 0; i--)
-				{
-					player->body_position[i] = player->body_position[i - 1];
-				}
-			}
-			else
-				field[player->body_position[0].y][player->body_position[0].x] = EMPTY_SYM;
-
-			player->body_position[i].x = player->body_position[i].x - 1;
-
-			field[player->body_position[i].y][player->body_position[i].x] = SNAKE_SYM;
-		
+		vert = 0;	horiz = -1;
 		break;
 	case RIGHT:
-		// checking for what our snake is eating..
-		if (player->body_position[0].x + 1 == fruit->position.x && player->body_position[0].y == fruit->position.y)
-		{
-			player->isGrow = 1;
-			player->length++;
-
-			fruit->inField = 0;
-		}
-		else
-		{
-			player->isGrow = 0;
-		}
-
-		if (player->length > 1)
-		{
-			i = len;
-			field[player->body_position[i - 1].y][player->body_position[i - 1].x] = EMPTY_SYM;
-			for (; i > 0; i--)
-			{
-				player->body_position[i] = player->body_position[i - 1];
-			}
-		}
-		else
-			field[player->body_position[0].y][player->body_position[0].x] = EMPTY_SYM;
-
-		player->body_position[i].x = player->body_position[i].x + 1;
-
-		field[player->body_position[i].y][player->body_position[i].x] = SNAKE_SYM;
+		vert = 0; 	horiz = 1;
 		break;
-
 	}
+
+	// shit below sould be a separate function
+	// and before this condition we need to check 
+	
+	// if the snake eats itself
+	// condition's code
+	// else 
+	if (player->body_position[0].x + horiz == fruit->position.x && player->body_position[0].y + vert == fruit->position.y)
+	{
+		player->isGrow = 1;
+		player->length++;
+
+		fruit->inField = 0;
+	}
+	else
+		player->isGrow = 0;
+
+	if (player->length > 1)
+	{
+		i = len;
+		field[player->body_position[i - 1].y][player->body_position[i - 1].x] = EMPTY_SYM;
+		for (; i > 0; i--)
+		{
+			player->body_position[i] = player->body_position[i - 1];
+		}
+	}
+	else
+		field[player->body_position[0].y][player->body_position[0].x] = EMPTY_SYM;
+
+	player->body_position[i].x = player->body_position[i].x + horiz;
+	player->body_position[i].y = player->body_position[i].y + vert;
+
+	field[player->body_position[i].y][player->body_position[i].x] = SNAKE_SYM;
 }
 
 //useless ? 
