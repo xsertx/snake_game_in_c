@@ -12,19 +12,14 @@
 // - sometimes apple randomly trying to grow on snake's body.. as a result fruit disappear on the map.
 // - add some color
 
-// some idea before sleep
-// make var up, down, left, right
-// then after reading keyboard just update this var
-// and according on value of this var-s update directions of snake
-
 #include<stdio.h>
 #include<stdlib.h>
 #include "snake_lib.h"
 #include <Windows.h>
 
-void setDirection(char key, snake* player, char field[F_SIZE][F_SIZE], food* fr);
+void setDirection(char key, snake* player, char field[F_SIZE][F_SIZE], food* fr, int* gameOver);
 
-void drawingField(char field[F_SIZE][F_SIZE]);
+void drawingField(char field[F_SIZE][F_SIZE], int state, snake* pl);
 void updateSnakeInField(snake* player, char field[F_SIZE][F_SIZE]);
 
 void placeFood(food* s_food, char field[F_SIZE][F_SIZE]);
@@ -32,6 +27,8 @@ void placeFood(food* s_food, char field[F_SIZE][F_SIZE]);
 int main()
 {
 	srand(time(NULL));
+
+	int gameOver = 0;
 
 	char key_pressed = DOWN;
 	int direction;
@@ -56,7 +53,7 @@ int main()
 	apple.inField = 0;
 
 	// Starting game - loop util snake will not eat itself
-	while (1)
+	while (!gameOver)
 	{
 
 		// Getting input from keyboard
@@ -64,7 +61,7 @@ int main()
 			key_pressed = _getch();
 
 		// setting new coordinates for our snake
-		setDirection(key_pressed, &player, field, &apple);
+		setDirection(key_pressed, &player, field, &apple, &gameOver);
 
 		// placing a food..
 		placeFood(&apple, field);
@@ -75,12 +72,16 @@ int main()
 		system("cls");	// clear screen - but this is very heavy operation so I will replace it later
 	}
 
+	system("cls");
+	printf("OMG NOOB..\n");
+	printf("GAME OVER\nYOUR SCORE: %d\n", player.length);
+
 	system("pause");
 
 	return 0;
 }
 
-void setDirection(char key, snake * player, char field[F_SIZE][F_SIZE], food * fruit)
+void setDirection(char key, snake * player, char field[F_SIZE][F_SIZE], food * fruit, int* gameOver)
 {
 	int i = 0, j = 0;
 	int len = player->length;
@@ -107,10 +108,7 @@ void setDirection(char key, snake * player, char field[F_SIZE][F_SIZE], food * f
 
 	// shit below sould be a separate function
 	// and before this condition we need to check 
-	
-	// if the snake eats itself
-	// condition's code
-	// else 
+
 	if (player->body_position[0].x + horiz == fruit->position.x && player->body_position[0].y + vert == fruit->position.y)
 	{
 		player->isGrow = 1;
@@ -135,6 +133,13 @@ void setDirection(char key, snake * player, char field[F_SIZE][F_SIZE], food * f
 
 	player->body_position[i].x = player->body_position[i].x + horiz;
 	player->body_position[i].y = player->body_position[i].y + vert;
+
+	if (player->length > 3)
+		for (j = 1; j < player->length; j++)
+		{
+			if (player->body_position[0].x == player->body_position[j].x && player->body_position[0].y == player->body_position[j].y)
+				*gameOver = 1;
+		}
 
 	field[player->body_position[i].y][player->body_position[i].x] = SNAKE_SYM;
 }
