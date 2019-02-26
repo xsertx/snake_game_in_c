@@ -2,7 +2,6 @@
 
 // TODO LIST
 // - do we need walls?
-// - fps .. sucks
 // - clean code
 // - add some color
 
@@ -14,10 +13,20 @@
 void setDirection(char key, snake* player, char field[F_SIZE][F_SIZE], food* fr, int* gameOver);
 void drawingField(char field[F_SIZE][F_SIZE], int state, snake* pl);
 void updateSnakeInField(snake* player, char field[F_SIZE][F_SIZE]);
-void placeFood(food* s_food, char field[F_SIZE][F_SIZE], snake * pl);
+void placeFood(food* s_food, char field[F_SIZE][F_SIZE], snake* pl);
+void setAndWrite(int x,int y, char symb);
+
+// Getting output console
+HANDLE hwd;
+
+// Creating cursor position
+COORD pos = { 0,0 };
 
 int main()
 {
+	// Passing a console to hwd
+	hwd = GetStdHandle(STD_OUTPUT_HANDLE);
+
 	srand(time(NULL));
 
 	int gameOver = 0;
@@ -44,6 +53,13 @@ int main()
 	food apple;
 	apple.inField = 0;
 
+	for (int i = 0; i < F_SIZE; i++)
+	{
+		for (int j = 0; j < F_SIZE; j++)
+			printf("%c", field[i][j]);
+		printf("\n");
+	}
+
 	// Starting game - loop util snake will not eat itself
 	while (!gameOver)
 	{
@@ -59,9 +75,9 @@ int main()
 		placeFood(&apple, field, &player);
 
 		// drawing field with snake
-		drawingField(field, DRAW, &player);
-		delay(300);		// frame rate would be faster but as I always want to win it would be 1 sec
-		system("cls");	// clear screen - but this is very heavy operation so I will replace it later
+		// drawingField(field, DRAW, &player);
+		delay(120);		// frame rate would be faster but as I always want to win it would be 1 sec
+		// system("cls");	// clear screen - but this is very heavy operation so I will replace it later
 	}
 
 	system("cls");
@@ -98,11 +114,10 @@ void setDirection(char key, snake * player, char field[F_SIZE][F_SIZE], food * f
 		break;
 	}
 
-	// shit below sould be a separate function
-	// and before this condition we need to check 
-
+	// checking if snake ate the fruit
 	if (player->body_position[0].x + horiz == fruit->position.x && player->body_position[0].y + vert == fruit->position.y)
 	{
+		// if yes then updating player's params
 		player->isGrow = 1;
 		player->length++;
 
@@ -111,29 +126,40 @@ void setDirection(char key, snake * player, char field[F_SIZE][F_SIZE], food * f
 	else
 		player->isGrow = 0;
 
+	// moving our snake .. cell by cell
+	// probably it's better to move only last cell to step up after head
 	if (player->length > 1)
 	{
 		i = len;
+		// deleting last element in the field
 		field[player->body_position[i - 1].y][player->body_position[i - 1].x] = EMPTY_SYM;
+
+		setAndWrite(player->body_position[i-1].x, player->body_position[i - 1].y, EMPTY_SYM);
+
+		// now moving snake's cell forward
 		for (; i > 0; i--)
-		{
 			player->body_position[i] = player->body_position[i - 1];
-		}
 	}
 	else
+	{
 		field[player->body_position[0].y][player->body_position[0].x] = EMPTY_SYM;
+
+		setAndWrite(player->body_position[0].x, player->body_position[0].y, EMPTY_SYM);
+	}
 
 	player->body_position[i].x = player->body_position[i].x + horiz;
 	player->body_position[i].y = player->body_position[i].y + vert;
 
-	if (player->length > 3)
-		for (j = 1; j < player->length; j++)
-		{
-			if (player->body_position[0].x == player->body_position[j].x && player->body_position[0].y == player->body_position[j].y)
-				*gameOver = 1;
-		}
+	setAndWrite(player->body_position[i].x, player->body_position[i].y,SNAKE_SYM);
 
 	field[player->body_position[i].y][player->body_position[i].x] = SNAKE_SYM;
+
+
+	if (player->length > 1)
+		for (j = 1; j < player->length; j++)
+			if (player->body_position[0].x == player->body_position[j].x && player->body_position[0].y == player->body_position[j].y)
+				* gameOver = 1;
+
 }
 
 //useless ? 
@@ -165,6 +191,7 @@ void drawingField(char field[F_SIZE][F_SIZE], int state, snake * pl)
 	}
 }
 
+
 void placeFood(food * fruit, char field[F_SIZE][F_SIZE], snake * pl)
 {
 	if (!fruit->inField)
@@ -191,6 +218,19 @@ void placeFood(food * fruit, char field[F_SIZE][F_SIZE], snake * pl)
 			if (c == pl->length)
 				foodNotInSnake = 1;
 		}
+
+		setAndWrite(fruit->position.x, fruit->position.y, FOOD_SYM);
+
 		field[fruit->position.y][fruit->position.x] = FOOD_SYM;
 	}
+}
+
+void setAndWrite(int x, int y, char symb)
+{
+	pos.X = x;
+	pos.Y = y;
+
+	SetConsoleCursorPosition(hwd, pos);
+
+	printf("%c", symb);
 }
